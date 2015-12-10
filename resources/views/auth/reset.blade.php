@@ -1,25 +1,20 @@
 @extends('layouts.master')
 
-@section('title', 'Login')
+@section('title', 'New password')
+
+@section('styles')
+    @parent
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+@stop
 
 @section('content')
     <div class="container">
-        <nav class="navbar navbar-default">
-            <div class="navbar-collapse collapse">
-                <ul class="nav navbar-nav">
-                    <li>
-                        <a href="{{ URL::route('register') }}">Register</a>
-                    </li>
-                    <li>
-                        <a href="{{ URL::route('email') }}">Reset password</a>
-                    </li>
-                </ul>
-            </div>
-        </nav>
-
         @include('partials.errors', ['errors' => $errors])
 
-        {!! Form::open(['route' => 'login']) !!}
+        {!! Form::open(['route' => ['reset', null]]) !!}
+            {!! Form::hidden('token', $token) !!}
+
             <div class="form-group">
                 {!! Form::label('email', 'Email:') !!}
                 {!! Form::email('email', old('email'), ['class' => 'form-control']) !!}
@@ -31,7 +26,12 @@
             </div>
 
             <div class="form-group">
-                {!! Form::submit('Login', ['class' => 'btn btn-lg btn-primary']) !!}
+                {!! Form::label('password', 'Confirm password:') !!}
+                {!! Form::password('password_confirmation', ['class' => 'form-control']) !!}
+            </div>
+
+            <div class="form-group">
+                {!! Form::submit('Reset Password', ['class' => 'btn btn-lg btn-primary']) !!}
             </div>
         {!! Form::close() !!}
     </div>

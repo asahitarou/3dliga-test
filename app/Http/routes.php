@@ -3,29 +3,31 @@
 Route::get('/', [
     'as' => 'home',
     'middleware' => 'auth',
-    function () {
-        return view('home');
-    }
+    'uses' => 'PagesController@home'
 ]);
 
-Route::group([
-    'prefix' => 'auth',
-    'namespace' => 'Auth'
-], function() {
-    Route::get('login', [
-        'as' => 'login',
-        'uses' => 'AuthController@getLogin'
-    ]);
-    Route::post('login', 'AuthController@postLogin');
+Route::controller(
+    'auth',
+    'Auth\AuthController',
+    [
+        'getLogin' => 'login',
+        'getLogout' => 'logout',
+        'getRegister' => 'register'
+    ]
+);
 
-    Route::get('logout', [
-        'as' => 'logout',
-        'uses' => 'AuthController@getLogout'
-    ]);
+Route::controller(
+    'password',
+    'Auth\PasswordController',
+    [
+        'getEmail' => 'email',
+        'getReset' => 'reset',
+        'getChange' => 'change'
+    ]
+);
 
-    Route::get('register', [
-        'as' => 'register',
-        'uses' => 'AuthController@getRegister'
-    ]);
-    Route::post('register', 'AuthController@postRegister');
+Route::get('/home', function(Illuminate\Http\Request $request) {
+    \Event::fire(new \App\Events\UserLogin(Auth::user(), $request));
+
+    dd('eb');
 });

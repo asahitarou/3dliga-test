@@ -2,12 +2,19 @@
 
 namespace App\Http\Controllers\Auth;
 
+use Illuminate\Support\Facades\Auth;
+use App\Events\UserLogin;
 use App\User;
 use Validator;
+use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\ThrottlesLogins;
 use Illuminate\Foundation\Auth\AuthenticatesAndRegistersUsers;
 
+/**
+ * Class AuthController
+ * @package App\Http\Controllers\Auth
+ */
 class AuthController extends Controller
 {
     /*
@@ -30,7 +37,7 @@ class AuthController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('guest', ['except' => 'getLogout']);
+        $this->middleware('guest', ['except' => ['getLogout']]);
     }
 
     /**
@@ -65,5 +72,45 @@ class AuthController extends Controller
         ]);
     }
 
+    /**
+     * Handle an authentication attempt.
+     *
+     * @param Request $request
+     * @param User $user
+     * @return Response
+     */
+    public function authenticated(Request $request, User $user)
+    {
+        \Event::fire(new UserLogin($user, $request));
+
+        return redirect()->intended($this->redirectPath());
+    }
+
+    /**
+     * @var string
+     */
     protected $redirectPath = '/';
+
+    /**
+     * Handle a registration request for the application.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function postRegister(Request $request)
+    {
+        $validator = $this->validator($request->all());
+
+        if ($validator->fails()) {
+            $this->throwValidationException(
+                $request, $validator
+            );
+        }
+
+        Auth::login($this->create($request->all()));
+
+        \Event::fire(new UserLogin(Auth::user(), $request));
+
+        return redirect($this->redirectPath());
+    }
 }

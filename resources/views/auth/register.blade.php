@@ -3,36 +3,38 @@
 @section('title', 'Register')
 
 @section('content')
-    <form method="POST" action="/auth/register">
-        {!! csrf_field() !!}
+    <div class="container">
+        @include('partials.errors', ['errors' => $errors])
 
-        <div>
-            Name
-            <input type="text" name="name" value="{{ old('name') }}">
-        </div>
+        {!! Form::open(['route' => 'register']) !!}
+            <div class="form-group">
+                {!! Form::label('login', 'Login:') !!}
+                {!! Form::text('login', old('login'), ['class' => 'form-control']) !!}
+            </div>
 
-        <div>
-            Login
-            <input type="text" name="login" value="{{ old('login') }}">
-        </div>
+            <div class="form-group">
+                {!! Form::label('name', 'Name:') !!}
+                {!! Form::text('name', old('name'), ['class' => 'form-control']) !!}
+            </div>
 
-        <div>
-            Email
-            <input type="email" name="email" value="{{ old('email') }}">
-        </div>
+            <div class="form-group">
+                {!! Form::label('email', 'Email:') !!}
+                {!! Form::email('email', old('email'), ['class' => 'form-control']) !!}
+            </div>
 
-        <div>
-            Password
-            <input type="password" name="password">
-        </div>
+            <div class="form-group">
+                {!! Form::label('password', 'Password:') !!}
+                {!! Form::password('password', ['class' => 'form-control']) !!}
+            </div>
 
-        <div>
-            Confirm Password
-            <input type="password" name="password_confirmation">
-        </div>
+            <div class="form-group">
+                {!! Form::label('password_confirmation', 'Confirm Password:') !!}
+                {!! Form::password('password_confirmation', ['class' => 'form-control']) !!}
+            </div>
 
-        <div>
-            <button type="submit">Register</button>
-        </div>
-    </form>
+            <div class="form-group">
+                {!! Form::submit('Register', ['class' => 'btn btn-lg btn-primary']) !!}
+            </div>
+        {!! Form::close() !!}
+    </div>
 @stop
